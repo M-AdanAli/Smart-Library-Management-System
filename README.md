@@ -10,6 +10,8 @@
 
 ## 🎯 Overview
 
+<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7424722977025585153?compact=1" height="399" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+
 This project showcases a **production-like architectural exercise** that evolved from a typical "Core Java LMS" into a sophisticated system featuring:
 
 - **Layered architecture** with clear separation of concerns
