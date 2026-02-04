@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class BookService {
-    private BooksRepository booksRepository;
+    private final BooksRepository booksRepository;
 
     public BookService(){
         booksRepository = new BooksRepository();
@@ -49,34 +49,40 @@ public class BookService {
     public void updateBookTitle(String isbn, String newTitle) throws EntityNotFoundException {
         Book book = getBookByIsbn(isbn).orElseThrow(()-> new EntityNotFoundException("Book not found with ISBN : "+isbn));
         book.setTitle(newTitle);
+        booksRepository.saveBooks();
     }
 
     public void updateBookAuthor(String isbn, String author) throws EntityNotFoundException {
         Book book = getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("Book not found with ISBN : "+isbn));
         book.setAuthor(author);
+        booksRepository.saveBooks();
     }
 
     public void updateBookGenre(String isbn, String genre) throws EntityNotFoundException {
         Book book = getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("Book not found with ISBN : "+isbn));
         book.setGenre(genre);
+        booksRepository.saveBooks();
     }
 
     public void updateBookPublicationDate(String isbn, LocalDate publicationDate) throws EntityNotFoundException {
         Book book = getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("Book not found with ISBN : "+isbn));
         book.setPublicationDate(publicationDate);
+        booksRepository.saveBooks();
     }
 
     public void increaseBookQuantity(String isbn, int value) throws EntityNotFoundException {
         Book book = getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("Book not found with ISBN : "+isbn));
         if (value>0) {
-            book.changeQuantityByValue(value);
+            book.increaseQuantity(value);
+            booksRepository.saveBooks();
         }else throw new IllegalArgumentException("Invalid increment value");
     }
 
     public void decreaseBookQuantity(String isbn, int value) throws EntityNotFoundException {
         Book book = getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("Book not found with ISBN : "+isbn));
         if (value>0) {
-            book.changeQuantityByValue(-value);
+            book.decreaseQuantity(value);
+            booksRepository.saveBooks();
         }else throw new IllegalArgumentException("Invalid decrement value");
     }
 
@@ -85,4 +91,7 @@ public class BookService {
         return booksRepository.searchBooks(query,searchAttribute);
     }
 
+    public BooksRepository getBooksRepository() {
+        return booksRepository;
+    }
 }

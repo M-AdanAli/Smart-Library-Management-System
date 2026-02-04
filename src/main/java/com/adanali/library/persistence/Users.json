@@ -1,0 +1,13 @@
+[ {
+  "name" : "{You can change this name using 'Update Profile' Options}",
+  "email" : "librarian@library.com",
+  "password" : "Password@123",
+  "role" : "com.adanali.library.model.Librarian"
+}, {
+  "name" : "{You can change this name using 'Update Profile' Options}",
+  "email" : "student1@gmail.com",
+  "password" : "Password@123",
+  "address" : "Pakistan",
+  "role" : "com.adanali.library.model.Student",
+  "pendingFine" : 0
+} ]

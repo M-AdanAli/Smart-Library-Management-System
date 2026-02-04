@@ -102,6 +102,7 @@ public class LibraryApp {
                         break;
                     case "3" :
                         library.printBorrowingsByUser(currentUser.getEmail());
+                        ConsoleUtil.delay(2000);
                         break;
                     case "4" :
                         exit = true;
@@ -218,16 +219,19 @@ public class LibraryApp {
     private static void userListPage(){
         boolean reRun = true;
         while (reRun){
+            ConsoleUtil.printLibraryHeader();
             System.out.println("1 - Librarians");
             System.out.println("2 - Students");
             System.out.println("3 - Go Back");
             String innerChoice = ConsoleUtil.inputString("Enter your choice");
             switch (innerChoice){
                 case "1":
+                    ConsoleUtil.printLibraryHeader();
                     library.printAllLibrarians();
                     ConsoleUtil.delay(2000);
                     break;
                 case "2":
+                    ConsoleUtil.printLibraryHeader();
                     library.printAllStudents();
                     ConsoleUtil.delay(2000);
                     break;
@@ -242,6 +246,7 @@ public class LibraryApp {
 
     private static void userSearchPage(){
         String searchQuery = ConsoleUtil.inputString("Enter search query");
+        ConsoleUtil.printLibraryHeader();
         library.searchForUser(searchQuery);
         ConsoleUtil.delay(2000);
     }
@@ -272,6 +277,7 @@ public class LibraryApp {
                     updateBookPage();
                     break;
                 case "4":
+                    ConsoleUtil.printLibraryHeader();
                     library.printAllBooks();
                     ConsoleUtil.delay(2000);
                     break;
@@ -305,6 +311,7 @@ public class LibraryApp {
     public static void updateBookPage(){
         boolean reRun = true;
         while (reRun) {
+            ConsoleUtil.printLibraryHeader();
             System.out.println("1 - Update Book's Title");
             System.out.println("2 - Update Book's Author");
             System.out.println("3 - Update Book's Genre");
@@ -369,6 +376,7 @@ public class LibraryApp {
     public static void updateBookQuantityPage(){
         boolean exit = false;
         while (!exit){
+            ConsoleUtil.printLibraryHeader();
             System.out.println("1 - Increment Book Quantity");
             System.out.println("2 - Decrement Book Quantity");
             System.out.println("3 - Go Back");
@@ -401,6 +409,7 @@ public class LibraryApp {
     public static void searchBooksOptions(){
         boolean exit = false;
         while (!exit) {
+            ConsoleUtil.printLibraryHeader();
             System.out.println("1 - Search Overall");
             System.out.println("2 - Search by title");
             System.out.println("3 - Search by Author Name");
@@ -412,21 +421,25 @@ public class LibraryApp {
             switch (innerChoice) {
                 case "1":
                     searchQuery = ConsoleUtil.inputString("Enter search query");
+                    ConsoleUtil.printLibraryHeader();
                     library.searchForBookOverall(searchQuery);
                     ConsoleUtil.delay(2000);
                     break;
                 case "2":
                     searchQuery = ConsoleUtil.inputString("Enter search query");
+                    ConsoleUtil.printLibraryHeader();
                     library.searchForBookByTitle(searchQuery);
                     ConsoleUtil.delay(2000);
                     break;
                 case "3":
                     searchQuery = ConsoleUtil.inputString("Enter search query");
+                    ConsoleUtil.printLibraryHeader();
                     library.searchForBookByAuthor(searchQuery);
                     ConsoleUtil.delay(2000);
                     break;
                 case "4":
                     searchQuery = ConsoleUtil.inputString("Enter search query");
+                    ConsoleUtil.printLibraryHeader();
                     library.searchForBookByGenre(searchQuery);
                     ConsoleUtil.delay(2000);
                     break;
@@ -496,6 +509,7 @@ public class LibraryApp {
                 case "1":
                     boolean reRun = true;
                     while (reRun){
+                        ConsoleUtil.printLibraryHeader();
                         System.out.println("1 - Active Borrowings");
                         System.out.println("2 - Returned Borrowings");
                         System.out.println("3 - Overdue Borrowings");
@@ -504,14 +518,17 @@ public class LibraryApp {
                         String innerChoice = ConsoleUtil.inputString("Enter your choice");
                         switch (innerChoice){
                             case "1":
+                                ConsoleUtil.printLibraryHeader();
                                 library.printActiveBorrowings();
                                 ConsoleUtil.delay(2000);
                                 break;
                             case"2":
+                                ConsoleUtil.printLibraryHeader();
                                 library.printReturnedBorrowings();
                                 ConsoleUtil.delay(2000);
                                 break;
                             case"3":
+                                ConsoleUtil.printLibraryHeader();
                                 library.printOverdueBorrowings();
                                 ConsoleUtil.delay(2000);
                                 break;
@@ -525,15 +542,18 @@ public class LibraryApp {
                     break;
                 case "2":
                     String email = ConsoleUtil.inputString("Enter User's Email");
+                    ConsoleUtil.printLibraryHeader();
                     library.printBorrowingsByUser(email);
                     ConsoleUtil.delay(2000);
                     break;
                 case "3":
                     String isbn = ConsoleUtil.inputString("Enter ISBN of Book");
+                    ConsoleUtil.printLibraryHeader();
                     library.printBorrowingsByBook(isbn);
                     ConsoleUtil.delay(2000);
                     break;
                 case "4":
+                    ConsoleUtil.printLibraryHeader();
                     library.printAllBorrowingRecords();
                     ConsoleUtil.delay(2000);
                     break;

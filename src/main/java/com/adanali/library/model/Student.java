@@ -1,16 +1,24 @@
 package com.adanali.library.model;
 
 import com.adanali.library.util.StringUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * Represents a student user in the library system.
  */
+@JsonTypeName("student")
 public class Student extends User implements Borrower{
     private int pendingFine;
     private String address;
 
-    public Student(String name, String email, String password, String address) {
-        super(name, email, password);
+    @JsonCreator
+    public Student(@JsonProperty("name") String name,
+                   @JsonProperty("email") String email,
+                   @JsonProperty("password") String password,
+                   @JsonProperty("address") String address) {
+        super(name, email, password, Student.class);
         setAddress(address);
     }
 
@@ -30,14 +38,14 @@ public class Student extends User implements Borrower{
 
     @Override
     public void addPendingFine(int fine) {
-        if (fine > 0) {
+        if (fine >= 0) {
             this.pendingFine += fine;
         } else throw new IllegalArgumentException("Fine cannot be negative!");
     }
 
     @Override
     public void reducePendingFine(int fine) {
-        if (fine > 0) {
+        if (fine >= 0) {
             if (fine <= this.pendingFine) {
                 this.pendingFine -= fine;
             } else {
@@ -49,8 +57,8 @@ public class Student extends User implements Borrower{
     }
 
     @Override
-    public byte getBorrowDurationInWeeks() {
-        return 2;
+    public byte getBorrowDurationInDays() {
+        return 3;
     }
 
     @Override
@@ -60,6 +68,6 @@ public class Student extends User implements Borrower{
 
     @Override
     public String toString() {
-        return String.format("%-15s | %-15s | %-20s | %-12s",getName(),getEmail(),getAddress(),getPendingFine());
+        return String.format("%-15s | %-25s | %-20s | %-12s",getName(),getEmail(),getAddress(),getPendingFine());
     }
 }

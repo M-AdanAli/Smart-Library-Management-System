@@ -19,7 +19,7 @@ public class LibraryService {
     public LibraryService(){
         userService = new UserService();
         bookService = new BookService();
-        borrowingService = new BorrowingService();
+        borrowingService = new BorrowingService(userService.getUsersRepository(), bookService.getBooksRepository());
     }
 
     // User Management
@@ -86,17 +86,17 @@ public class LibraryService {
     }
 
     public void printAllLibrarians(){
-        System.out.printf("%-15s | %-15s%n","NAME","E-MAIL");
+        System.out.printf("%-25s | %-25s%n","NAME","E-MAIL");
         userService.listAllUsers().stream().filter(x->x.getRole().equalsIgnoreCase("Librarian")).forEach(System.out::println);
     }
 
     public void printAllStudents(){
-        System.out.printf("%-15s | %-15s | %-20s | %-12s%n","NAME","E-MAIL","ADDRESS","PENDING FINE");
+        System.out.printf("%-15s | %-25s | %-20s | %-12s%n","NAME","E-MAIL","ADDRESS","PENDING FINE");
         userService.listAllUsers().stream().filter(x->x.getRole().equalsIgnoreCase("Student")).forEach(System.out::println);
     }
 
     public void searchForUser(String query){
-        System.out.printf("%-15s | %-15s | %-20s | %-12s%n","NAME","E-MAIL","ADDRESS","PENDING FINE");
+        System.out.printf("%-15s | %-25s | %-20s | %-12s%n","NAME","E-MAIL","ADDRESS","PENDING FINE");
         userService.searchUsers(query).forEach(System.out::println);
     }
 
@@ -193,13 +193,13 @@ public class LibraryService {
     }
 
     public void printAllBooks(){
-        System.out.printf("%-16s | %-23s | %-15s | %-12s | %-16s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
+        System.out.printf("%-16s | %-40s | %-25s | %-20s | %-20s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
         bookService.listAllBooks().forEach(System.out::println);
     }
 
     public void searchForBookOverall(String query){
         try {
-            System.out.printf("%-16s | %-40s | %-25s | %-20s | %-16s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
+            System.out.printf("%-16s | %-40s | %-25s | %-20s | %-20s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
             bookService.searchBooks(query, BooksRepository.SearchAttribute.ALL).forEach(System.out::println);
         }catch (IllegalArgumentException e){
             System.out.println(e.getMessage());
@@ -207,17 +207,17 @@ public class LibraryService {
     }
 
     public void searchForBookByTitle(String query){
-        System.out.printf("%-16s | %-23s | %-15s | %-12s | %-16s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
+        System.out.printf("%-16s | %-40s | %-25s | %-20s | %-20s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
         bookService.searchBooks(query, BooksRepository.SearchAttribute.TITLE).forEach(System.out::println);
     }
 
     public void searchForBookByAuthor(String query){
-        System.out.printf("%-16s | %-23s | %-15s | %-12s | %-16s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
+        System.out.printf("%-16s | %-40s | %-25s | %-20s | %-20s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
         bookService.searchBooks(query, BooksRepository.SearchAttribute.AUTHOR).forEach(System.out::println);
     }
 
     public void searchForBookByGenre(String query){
-        System.out.printf("%-16s | %-23s | %-15s | %-12s | %-16s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
+        System.out.printf("%-16s | %-40s | %-25s | %-20s | %-20s | %-8s%n","ISBN","TITLE","AUTHOR","GENRE","PUBLICATION DATE","QUANTITY");
         bookService.searchBooks(query, BooksRepository.SearchAttribute.GENRE).forEach(System.out::println);
     }
 
@@ -225,10 +225,10 @@ public class LibraryService {
 
     public void addBorrowedBook(String email, String isbn){
         try {
-            User borrower = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
+            User user = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
             Book bookToBorrow = bookService.getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("There is no book in library with ISBN : "+isbn));
-            if (borrower instanceof Borrower){
-                borrowingService.borrowBook((Borrower) borrower,bookToBorrow);
+            if (user instanceof Borrower borrower){
+                borrowingService.borrowBook(borrower,bookToBorrow);
                 System.out.println("Record added successfully");
             }else throw new IllegalAccessException("Only Users with borrow rights can borrow!");
         } catch (IllegalArgumentException | EntityDuplicationException | IllegalStateException | EntityNotFoundException | IllegalAccessException e) {
@@ -238,10 +238,10 @@ public class LibraryService {
 
     public void addReturnedBook(String email, String isbn){
         try {
-            User borrower = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
+            User user = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
             Book bookToBorrow = bookService.getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("There is no book in library with ISBN : "+isbn));
-            if (borrower instanceof Borrower) {
-                borrowingService.returnBook((Borrower) borrower, bookToBorrow);
+            if (user instanceof Borrower borrower) {
+                borrowingService.returnBook(borrower, bookToBorrow);
                 System.out.println("Record has been updated successfully");
             }else throw new IllegalAccessException("The User don't even have borrowing rights!");
         } catch (IllegalArgumentException | EntityNotFoundException | IllegalAccessException | IllegalStateException e) {
@@ -251,9 +251,9 @@ public class LibraryService {
 
     public void addPaidFine(String email,int amount){
         try {
-            User borrower = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
-            if (borrower instanceof Borrower){
-                borrowingService.payFine((Borrower) borrower,amount);
+            User user = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
+            if (user instanceof Borrower borrower){
+                borrowingService.payFine(borrower,amount);
                 System.out.println("The Borrower's pending amount has been reduced by amount : "+amount);
             }else throw new IllegalAccessException("The User don't even have borrowing rights!");
         }catch (EntityNotFoundException | IllegalAccessException | IllegalArgumentException | IllegalStateException e){
@@ -265,30 +265,30 @@ public class LibraryService {
     // See Borrowing Records
 
     public void printActiveBorrowings(){
-        System.out.printf("%-25s | %-15s | %-15s | %-11s | %-10s | %-11s | %-10s | %-8s%n",
+        System.out.printf("%-50s | %-25s | %-25s | %-20s | %-20s | %-20s | %-10s | %-8s%n",
                 "RECORD ID", "BOOK", "Borrower", "BORROW DATE", "DUE DATE", "RETURN DATE", "STATUS", "FINE" );
         borrowingService.getActiveBorrowings().forEach(System.out::println);
     }
 
     public void printReturnedBorrowings(){
-        System.out.printf("%-25s | %-15s | %-15s | %-11s | %-10s | %-11s | %-10s | %-8s%n",
+        System.out.printf("%-50s | %-25s | %-25s | %-20s | %-20s | %-20s | %-10s | %-8s%n",
                 "RECORD ID", "BOOK", "Borrower", "BORROW DATE", "DUE DATE", "RETURN DATE", "STATUS", "FINE" );
         borrowingService.getReturnedBorrowings().forEach(System.out::println);
     }
 
     public void printOverdueBorrowings(){
-        System.out.printf("%-25s | %-15s | %-15s | %-11s | %-10s | %-11s | %-10s | %-8s%n",
+        System.out.printf("%-50s | %-25s | %-25s | %-20s | %-20s | %-20s | %-10s | %-8s%n",
                 "RECORD ID", "BOOK", "Borrower", "BORROW DATE", "DUE DATE", "RETURN DATE", "STATUS", "FINE" );
         borrowingService.getOverdueBorrowings().forEach(System.out::println);
     }
 
     public void printBorrowingsByUser(String email){
         try {
-            User borrower = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
-            if (borrower instanceof Borrower){
-                System.out.printf("%-25s | %-15s | %-15s | %-11s | %-10s | %-11s | %-10s | %-8s%n",
+            User user = userService.getUserByEmail(email).orElseThrow(()->new EntityNotFoundException("There is no Borrower registered with the email : "+email));
+            if (user instanceof Borrower borrower){
+                System.out.printf("%-50s | %-25s | %-25s | %-20s | %-20s | %-20s | %-10s | %-8s%n",
                         "RECORD ID", "BOOK", "Borrower", "BORROW DATE", "DUE DATE", "RETURN DATE", "STATUS", "FINE" );
-                borrowingService.getBorrowingsByBorrower((Borrower) borrower).forEach(System.out::println);
+                borrowingService.getBorrowingsByBorrower(borrower).forEach(System.out::println);
             }else throw new IllegalAccessException("The User don't even have borrowing rights!");
         } catch (EntityNotFoundException | IllegalAccessException | IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -298,7 +298,7 @@ public class LibraryService {
     public void printBorrowingsByBook(String isbn){
         try {
             Book book = bookService.getBookByIsbn(isbn).orElseThrow(()->new EntityNotFoundException("There is no book in library with ISBN : "+isbn));
-            System.out.printf("%-25s | %-15s | %-15s | %-11s | %-10s | %-11s | %-10s | %-8s%n",
+            System.out.printf("%-50s | %-25s | %-25s | %-20s | %-20s | %-20s | %-10s | %-8s%n",
                     "RECORD ID", "BOOK", "Borrower", "BORROW DATE", "DUE DATE", "RETURN DATE", "STATUS", "FINE" );
             borrowingService.getBorrowingsByBook(book).forEach(System.out::println);
         }catch (EntityNotFoundException | IllegalArgumentException e){
@@ -307,7 +307,7 @@ public class LibraryService {
     }
 
     public void printAllBorrowingRecords(){
-        System.out.printf("%-25s | %-15s | %-15s | %-11s | %-10s | %-11s | %-10s | %-8s%n",
+        System.out.printf("%-50s | %-25s | %-25s | %-20s | %-20s | %-20s | %-10s | %-8s%n",
                 "RECORD ID", "BOOK", "Borrower", "BORROW DATE", "DUE DATE", "RETURN DATE", "STATUS", "FINE" );
         borrowingService.getAllRecords().forEach(System.out::println);
     }

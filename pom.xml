@@ -20,7 +20,19 @@
   <name>Smart-Library-Management-System</name>
   <url>http://maven.apache.org</url>
   <dependencies>
-    <dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.18.2</version>
+      </dependency>
+
+      <dependency>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jsr310</artifactId>
+          <version>2.18.2</version>
+      </dependency>
+
+      <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>

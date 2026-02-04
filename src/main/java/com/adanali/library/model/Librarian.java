@@ -1,12 +1,20 @@
 package com.adanali.library.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 /**
  * Represents a librarian user in the library system.
  */
+@JsonTypeName("librarian")
 public class Librarian extends User {
 
-    public Librarian(String name, String email, String password) {
-        super(name, email, password);
+    @JsonCreator
+    public Librarian(@JsonProperty("name") String name,
+                     @JsonProperty("email") String email,
+                     @JsonProperty("password") String password) {
+        super(name, email, password, Librarian.class);
     }
 
     @Override

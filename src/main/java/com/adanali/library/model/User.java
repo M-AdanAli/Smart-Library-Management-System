@@ -1,21 +1,34 @@
 package com.adanali.library.model;
 
 import com.adanali.library.util.StringUtil;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Objects;
 
 /**
  * Abstract base class representing a user in the library system.
  */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "role"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Student.class , name = "student"),
+        @JsonSubTypes.Type(value = Librarian.class , name = "librarian")
+})
 public abstract class User {
     private String name;
     private String email;
     private String password;
+    private Class role;
 
-    protected User(String name, String email, String password){
+    protected User(String name, String email, String password, Class role){
         setName(name);
         setEmail(email);
         setPassword(password);
+        this.role = role;
     }
 
     public String getName() {
@@ -65,6 +78,6 @@ public abstract class User {
 
     @Override
     public String toString() {
-        return String.format("%-15s | %-15s",getName(),getEmail());
+        return String.format("%-25s | %-25s",getName(),getEmail());
     }
 }

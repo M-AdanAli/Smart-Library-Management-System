@@ -1,6 +1,8 @@
 package com.adanali.library.model;
 
 import com.adanali.library.util.StringUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -14,7 +16,13 @@ public class Book {
     private LocalDate publicationDate;
     private int quantity;
 
-    public Book(String isbn, String title, String authorName, String genre, LocalDate publicationDate, int quantity) {
+    @JsonCreator
+    public Book(@JsonProperty("isbn") String isbn,
+                @JsonProperty("title") String title,
+                @JsonProperty("authorName") String authorName,
+                @JsonProperty("genre") String genre,
+                @JsonProperty("publicationDate") LocalDate publicationDate,
+                @JsonProperty("quantity") int quantity) {
         this.isbn = isbn;
         setTitle(title);
         setAuthor(authorName);
@@ -69,15 +77,21 @@ public class Book {
     }
 
     private void setQuantity(int quantity) {
-        if (quantity > 0) {
+        if (quantity >= 0) {
             this.quantity = quantity;
         }else throw new IllegalArgumentException("Quantity cannot be zero/negative after change");
     }
 
-    public void changeQuantityByValue(int value){
-        if (value != 0){
+    public void increaseQuantity(int value){
+        if (value >= 0){
             this.setQuantity(this.getQuantity()+value);
-        }else throw new IllegalArgumentException("Invalid value to change book quantity!");
+        }else throw new IllegalArgumentException("Invalid value to increase book quantity!");
+    }
+
+    public void decreaseQuantity(int value){
+        if (value >= 0){
+            this.setQuantity(this.getQuantity()-value);
+        }else throw new IllegalArgumentException("Invalid value to decrease book quantity!");
     }
 
     public boolean isAvailableForBorrow() {
@@ -98,7 +112,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return String.format("%-16s | %-40s | %-25s | %-20s | %-16s | %-8d",
+        return String.format("%-16s | %-40s | %-25s | %-20s | %-20s | %-8d",
                 getIsbn(), getTitle(), getAuthor(), getGenre(), getPublicationDate(), getQuantity());
     }
 }
