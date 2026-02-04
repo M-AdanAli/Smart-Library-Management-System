@@ -10,7 +10,7 @@
 
 ## 🎯 Overview
 
-<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7424722977025585153?compact=1" height="399" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+-| [Explainer Video](https://www.linkedin.com/feed/update/urn:li:activity:7424723314864021504/) |-
 
 This project showcases a **production-like architectural exercise** that evolved from a typical "Core Java LMS" into a sophisticated system featuring:
 
