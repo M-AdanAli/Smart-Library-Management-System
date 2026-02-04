@@ -1,132 +1,318 @@
-# Smart Library Management System
+# 📚 Smart Library Management System
 
-[![Java Version](https://img.shields.io/badge/Java-11%2B-orange.svg)](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
-[![Build Status](https://img.shields.io/badge/build-pending-yellow.svg)](https://github.com/M-AdanAli/Smart-Library-Management-System)
+> A **console-based Smart Library Management System** built in **pure Java**, demonstrating clean architecture, OOP principles, and production-ready design patterns.
 
-***
+[![Java](https://img.shields.io/badge/Java-8%2B-orange.svg)](https://www.oracle.com/java/)
+[![Jackson](https://img.shields.io/badge/Jackson-2.17.0-blue.svg)](https://github.com/FasterXML/jackson)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Project Description
+---
 
-A modular and scalable console-based Java application for managing library operations, designed to demonstrate solid Object-Oriented Programming principles while providing core library features like book and user management, borrowing and returning functionality, and fine calculation.
+## 🎯 Overview
 
-***
+This project showcases a **production-like architectural exercise** that evolved from a typical "Core Java LMS" into a sophisticated system featuring:
 
-## Key Features
+- **Layered architecture** with clear separation of concerns
+- **JSON-based persistence** using Jackson (no database required)
+- **Polymorphic domain model** with proper OOP and custom exceptions
+- **Realistic borrowing lifecycle** with overdue detection and automated fine calculation
 
-- **User Management:** Registration and management of different user roles including students and librarians with secure authentication.
-- **Book Catalog:** Addition, removal, update, and search of books with detailed metadata.
-- **Borrowing System:** Users can borrow and return books with automatic tracking of due dates, status, and overdue fine calculation.
-- **Fine Management:** Automatic fine calculation based on overdue duration with pending fine tracking for borrowers.
-- **Robust Input Validation:** Strong validation on user inputs including emails, passwords, and ISBNs.
-- **Extensible Design:** Adheres to core OOP concepts using abstraction, inheritance, polymorphism, encapsulation, interfaces, and enums.
-- **Separation of Concerns:** Well-organized package structure separating model, service, repository (planned), exceptions, utilities, and application layers.
-- **Immutable Collections:** Uses unmodifiable lists to ensure safety of internal state.
-- **Prepared for Advanced Features:** Planned integration of generics, streams, custom exceptions, database persistence, multi-threading, logging, and testing.
+---
 
-***
+## ✨ Key Features
 
-## Technologies Used
+### 🏗️ Layered Architecture
+```
+Console UI (CUI)
+    ↓
+LibraryService (Facade)
+    ↓
+Services Layer (UserService, BookService, BorrowingService)
+    ↓
+Repository Layer (JSON-backed persistence)
+    ↓
+Domain Model (Entities & DTOs)
+```
 
-- **Java 11+**
-- **Maven** (Recommended for dependency management and build)
-- **JUnit** (For unit testing - planned)
-- **SQLite** (Planned for persistence layer integration)
-- **SLF4J / Log4j** (Planned logging framework)
-- **Git** (Version control)
+- **Domain Layer**: `User`, `Student`, `Librarian`, `Book`, `BorrowingRecord`
+- **Repository Layer**: JSON file-based storage with full CRUD operations
+- **Service Layer**: Business logic encapsulation
+- **Facade Layer**: `LibraryService` orchestrates all operations
+- **UI Layer**: Console-based interface with robust input handling
 
-***
+### 💾 Persistent Storage
 
-## Getting Started
+- **Jackson ObjectMapper** with `JavaTimeModule` for `LocalDate` serialization
+- **Field-level visibility** configuration (no public getters/setters needed)
+- **Automatic object graph reconstruction** on startup
+- Custom `JsonStorageUtil` for reliable data persistence
+
+### 👥 Polymorphic User System
+
+- Abstract `User` base class with concrete implementations:
+    - **Student/Borrower**: Borrow privileges, fine tracking
+    - **Librarian**: Administrative operations
+- Jackson `@JsonTypeInfo` and `@JsonSubTypes` for type preservation
+- Seamless deserialization maintaining concrete types
+
+### 📖 Complete Borrowing Lifecycle
+
+**BorrowingRecord Status Management:**
+- `ACTIVE` - Currently borrowed
+- `RETURNED` - Returned on time or late
+- `OVERDUE` - Past due date, not yet returned
+
+**Automated Fine Calculation:**
+- Triggers only when status is `OVERDUE`
+- Calculates based on days between `dueDate` and `returnDate` (or current date)
+- Fine rate: **50 units per day**
+
+### 🔍 Advanced Book Management
+
+**Search Capabilities:**
+- By title, author, genre, or ALL attributes
+- Uses `SearchAttribute` enum for type-safe queries
+
+**Inventory Management:**
+- Add/update books with validation
+- Quantity tracking and availability checks
+- ISBN uniqueness enforcement
+
+---
+
+## ⚙️ Technology Stack
+
+| Component | Technology |
+|-----------|------------|
+| Language | Java 8+ |
+| Persistence | Jackson (JSON) |
+| Serialization | jackson-databind 2.17.0 |
+| Date/Time | jackson-datatype-jsr310 2.17.0 |
+| UI | Console/CLI |
+| Build | Maven/Gradle compatible |
+
+### Maven Dependencies
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.17.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>2.17.0</version>
+    </dependency>
+</dependencies>
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- JDK 11 or higher installed and configured on your machine.
-- Maven installed (optional but recommended).
+- Java Development Kit (JDK) 8 or higher
+- Maven or Gradle (optional)
+- IDE (IntelliJ IDEA, Eclipse, VS Code) or text editor
 
 ### Installation
 
-1. **Clone the repository:**
-
+1. **Clone the repository**
 ```bash
-git clone https://github.com/M-AdanAli/Smart-Library-Management-System.git
-cd Smart-Library-Management-System
+   git clone https://github.com/M-AdanAli/Smart-Library-Management-System.git
+   cd Smart-Library-Management-System
 ```
 
-2. **Build the project using Maven (if Maven is used):**
+2. **Configure your IDE**
+    - Import as Java project
+    - Ensure JDK 8+ is configured
+    - Add Jackson libraries to classpath (via Maven/Gradle or manual JAR inclusion)
 
+3. **Run the application**
+
+   **Via IDE:**
+    - Locate the `Main` class
+    - Run as Java Application
+
+   **Via Command Line:**
 ```bash
-mvn clean install
+   javac -cp libs/* src/.../Main.java
+   java -cp libs/*:src ...Main
 ```
 
-3. **Import in your favorite IDE** such as IntelliJ IDEA or Eclipse as a Maven project or plain Java project.
+---
 
-***
+## 🔐 Default Credentials
 
-## Usage Instructions
+> ⚠️ **For demo/testing purposes only** - Change in production!
 
-- Run the **`LibraryApp`** main class located in the `com.adanali.library.app` package to start the console-based application.
-- The application will prompt you with a menu for user login, book management, borrowing operations, and fine payments.
-- Use valid credentials to login or register to create new users.
-- Search books by title, author, or genre using flexible search options.
-- Borrow and return books following due dates to avoid fines.
-- Keep track of pending fines and pay them as per prompts.
-- The system validates all inputs strictly to ensure data integrity.
-
-> **Note:** Currently, the system uses in-memory data structures and simple console I/O. Planned enhancements will enable database persistence and GUI/web interfaces.
-
-***
-
-## Project Structure
-
+### Default Librarian
 ```
-com.adanali.library
-│
-├── app            # Main app entry point and UI
-├── model          # Domain entities like Book, User, BorrowingRecord
-├── service        # Business logic layer (UserService, BookService, BorrowingService)
-├── repository     # DAO and database interaction (planned)
-├── exceptions     # Custom exception classes
-├── util           # Utilities and validators
+Email:    librarian@library.com
+Password: Password@123
+Role:     LIBRARIAN
 ```
 
-This clean modular structure facilitates maintainability and scalability.
+### System Defaults
 
-***
+| Setting | Value             |
+|---------|-------------------|
+| Borrowing Duration | 3 days (Students) |
+| Fine per Overdue Day | 50 units          |
+| Date Format | yyyy-MM-dd        |
 
-## Contact / Support
+---
 
-For questions, feature requests, or bug reports, please use the [GitHub Issues](https://github.com/M-AdanAli/Smart-Library-Management-System/issues) section of this repository.
+## 📋 Business Rules
 
-Alternatively, you can reach out via email: **imadanirfan@gmail.com**
+### Borrowing Eligibility
 
-***
+A borrower can borrow a book **only if:**
+- ✅ No pending fines (or within allowed limits)
+- ✅ Book has available quantity > 0
 
-## Screenshots / Demo
+### Borrowing Process
 
-Currently, this project is a console-based application. Screenshots or demo videos are not yet available. Future GUI or web interface versions are planned.
+1. Generate unique record ID (timestamp + UUID)
+2. Validate borrower eligibility
+3. Check book availability
+4. Decrease book quantity by 1
+5. Create `BorrowingRecord` with status `ACTIVE`
+6. Persist all changes to JSON
 
-***
+### Return Process
 
-## Future Enhancements
+1. Locate active record for (borrower, book)
+2. Set `returnDate` to current date
+3. Update status (`RETURNED` or `OVERDUE`)
+4. Calculate fine if overdue
+5. Increase book quantity by 1
+6. Persist updates
 
-- **Persistence Layer:** Transition from in-memory collections to database-backed storage using SQLite and JDBC, through repository pattern.
-- **Logging:** Integrate SLF4J/Log4j for standardized logging, replacing System.out/err prints.
-- **Security Improvements:** Password hashing, salting, and improved authentication mechanisms.
-- **Concurrency:** Thread-safe operations to support multi-user interactions.
-- **Unit and Integration Testing:** JUnit test coverage to improve reliability.
-- **Graphical/User Interface:** Swing/JavaFX or Spring Boot front-end to improve UX.
-- **Annotations & Validation:** Leverage Java annotations for declarative validation and auditing.
+### Fine Calculation
+```java
+if (status == OVERDUE) {
+    long overdueDays = ChronoUnit.DAYS.between(dueDate, returnDate);
+    fine = overdueDays * 50;
+}
+```
 
-***
+---
 
-## Acknowledgments
+## 💻 Console UI Guide
 
-Inspired by best practices in Java development, focusing on clean code, OOP principles, and industry standards.
+### ConsoleUtil Helper Methods
 
-***
+| Method | Purpose |
+|--------|---------|
+| `printLibraryHeader()` | Display app header |
+| `printWelcomeUser(String name)` | Personalized greeting |
+| `inputString(String prompt)` | Get string input |
+| `inputDate(String prompt)` | Get date (yyyy-MM-dd format) |
+| `inputInteger(String prompt)` | Get integer with validation |
+| `clearConsole()` | Simulate screen clear |
+| `delay(long duration)` | Add pause for UX |
 
-Thank you for exploring the Smart Library Management System! Contributions and feedback are highly welcome.
+### UI Best Practices
 
-***
+> ⚠️ **Console Zoom Warning**: Tables and formatted outputs are optimized for specific console dimensions. If layout appears misaligned:
+> - Zoom out your console window
+> - Increase terminal width
+> - Reduce font size
 
-[Visit the GitHub Repository »](https://github.com/M-AdanAli/Smart-Library-Management-System)
+---
+
+## ⚠️ Important Limitations
+
+### Security
+- ❌ Passwords stored in **plain text** in JSON
+- ❌ No encryption or hashing
+- ❌ Not suitable for production without security enhancements
+
+### Concurrency
+- ❌ **Single-user** design only
+- ❌ No file locking or concurrent access handling
+- ❌ No transaction support
+
+---
+
+## 🎯 Project Goals
+
+This project serves as an **educational and portfolio piece** demonstrating:
+
+✅ Clean separation of concerns in Java  
+✅ JSON persistence with Jackson and DTOs  
+✅ Polymorphism and custom exception handling  
+✅ Realistic domain modeling  
+✅ Console UI with robust input validation
+
+---
+
+## 🔮 Future Enhancements
+
+### Planned Improvements
+
+- [ ] **Database Integration**: PostgreSQL or MySQL
+- [ ] **JavaFX Desktop App**: Native GUI
+- [ ] **Password Hashing**: BCrypt or similar
+- [ ] **Unit Tests**: JUnit 5 coverage
+- [ ] **Logging**: SLF4J + Logback
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! This project improves through community feedback.
+
+### How to Contribute
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
+3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** to the branch (`git push origin feature/AmazingFeature`)
+5. **Open** a Pull Request
+
+### Feedback Areas
+
+We especially appreciate feedback on:
+- Architecture and design patterns
+- Code organization and naming conventions
+- Exception handling strategies
+- Testability improvements
+- Performance optimizations
+
+---
+
+## 👤 Author
+
+**M. Adan Ali**
+
+- GitHub: [@M-AdanAli](https://github.com/M-AdanAli)
+- Project Link: [Smart Library Management System](https://github.com/M-AdanAli/Smart-Library-Management-System)
+
+---
+
+## ⭐ Show Your Support
+
+If you found this project helpful or interesting:
+
+- ⭐ **Star** this repository
+- 🍴 **Fork** it for your own learning
+- 📢 **Share** with others who might benefit
+
+Your support helps guide future improvements and encourages continued development!
+
+---
+
+## 📞 Support
+
+For questions or issues:
+- Open an [Issue](https://github.com/M-AdanAli/Smart-Library-Management-System/issues)
+- Check existing documentation
+- Review the code examples in this README
+
+---
+
+**Built with ❤️ using Core Java and Jackson**
